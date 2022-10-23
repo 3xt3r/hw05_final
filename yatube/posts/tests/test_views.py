@@ -1,6 +1,5 @@
 from time import sleep
 from yatube.settings import NUMBER_OF_POSTS
-from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.test import Client, TestCase
 from django.urls import reverse
@@ -407,7 +406,7 @@ class TestPaginator(TestCase):
         post: list = []
 
         for i in range(NUMBER_OF_POSTS + TEST_POSTS_OFFSET):
-            post.append(Post(text=f'Тестовый текст',
+            post.append(Post(text='Тестовый текст',
                                   group=self.group,
                                   author=self.user))
         Post.objects.bulk_create(post)

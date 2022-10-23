@@ -5,7 +5,6 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect
 from .utils import get_paginator
 from .forms import CommentForm, PostForm
-from yatube.settings import NUMBER_OF_POSTS
 
 
 def index(request):

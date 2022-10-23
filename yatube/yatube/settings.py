@@ -15,7 +15,7 @@ DEBUG = True
 NUMBER_OF_POSTS = 10
 
 MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media') 
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 ALLOWED_HOSTS = [
     'localhost',
@@ -28,7 +28,7 @@ CACHES = {
     'default': {
         'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
     }
-} 
+}
 
 CSRF_FAILURE_VIEW = 'core.views.csrf_failure'
 
