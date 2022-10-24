@@ -36,6 +36,50 @@ class PostsURLTests(TestCase):
         self.auth_client.force_login(PostsURLTests.user)
         self.auth_client_not_author.force_login(PostsURLTests.user_not_author)
 
+    def test_post_comment_url_exists_at_desired_location(self):
+        """Проверка возможности комментирования поста
+        зарегистрированному пользователю и редиректа
+        на страницу логина для гостя"""
+
+        address = f'/posts/{self.post.pk}/comment/'
+        guest_response = self.guest_client.get(address, follow=True)
+        auth_response = self.auth_client.get(address)
+
+        self.assertRedirects(
+            guest_response,
+            f'/auth/login/?next={address}'
+        )
+        self.assertEqual(auth_response.reason_phrase, 'Found')
+
+    def test_following_urls_for_guest(self):
+        """Проверка недоступности подписок для гостя"""
+
+        url_names = [
+            f'/profile/{self.user.username}/follow/',
+            f'/profile/{self.user.username}/unfollow/',
+        ]
+
+        for address in url_names:
+            with self.subTest(address=address):
+                guest_response = self.guest_client.get(address, follow=True)
+
+                self.assertRedirects(
+                    guest_response,
+                    f'/auth/login/?next={address}'
+                )
+
+    def test_following_urls_for_auth_user(self):
+        """Проверка доступности подписок для пользователя"""
+
+        url_names = [
+            f'/profile/{self.user.username}/follow/',
+            f'/profile/{self.user.username}/unfollow/',
+        ]
+        for address in url_names:
+            with self.subTest(address=address):
+                auth_response = self.auth_client_not_author.get(address)
+                self.assertEqual(auth_response.status_code, 302)
+
     def test_homepage(self):
         response = self.guest_client.get('/')
         self.assertEqual(response.status_code, 200)
@@ -116,6 +160,7 @@ class PostsURLTests(TestCase):
             f'/posts/{post.pk}/': 'posts/post_detail.html',
             f'/posts/{post.pk}/edit/': 'posts/create_post.html',
             '/create/': 'posts/create_post.html',
+            '/follow/': 'posts/follow.html',
         }
 
         for address, template in url_templates_names.items():

@@ -108,7 +108,14 @@ class Comment(CreatedModel):
     # created = models.DateTimeField('Дата публикации', auto_now_add=True)
 
     class Meta:
-        ordering = ['-created']
+        constraints = [
+            models.UniqueConstraint(fields=['user', 'author'],
+                                    name='uniq_follow'),
+            models.CheckConstraint(
+                check=~models.Q(user=models.F('author')),
+                name='no_self_follow'
+            )
+        ]
 
     def __str__(self):
         return self.text[:15]

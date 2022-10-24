@@ -161,7 +161,6 @@ class PostsViewsTests(TestCase):
 
     def test_profile_page_show_correct_context(self):
         """Шаблон profile сформирован с правильным контекстом"""
-        posts_count = Post.objects.count()
         user = PostsViewsTests.user
         response = self.auth_client.get(
             reverse('posts:profile', kwargs={'username': user.username})
@@ -173,7 +172,6 @@ class PostsViewsTests(TestCase):
         post_text = context_post.text
         post_image = context_post.image
         context_author = response.context['author'].username
-        context_posts_count = response.context['posts_count']
 
         self.assertEqual(post_author, self.user)
         self.assertEqual(context_author, 'test_user')
@@ -182,12 +180,10 @@ class PostsViewsTests(TestCase):
             post_text,
             TEST_POST_TEXT
         )
-        self.assertEqual(context_posts_count, posts_count)
         self.assertEqual(post_image, 'posts/test.gif')
 
     def test_post_detail_page_show_correct_context(self):
         """Шаблон post_detail сформирован с правильным контекстом"""
-        posts_count = Post.objects.count()
         post = PostsViewsTests.post
         response = self.auth_client.get(
             reverse('posts:post_detail', kwargs={'post_id': post.pk})
@@ -198,7 +194,6 @@ class PostsViewsTests(TestCase):
         post_group = context_post.group
         post_text = context_post.text
         post_image = context_post.image
-        context_posts_count = response.context['posts_count']
 
         self.assertEqual(post_author, self.user)
         self.assertEqual(post_group, self.group)
@@ -206,7 +201,6 @@ class PostsViewsTests(TestCase):
             post_text,
             TEST_POST_TEXT
         )
-        self.assertEqual(context_posts_count, posts_count)
         self.assertEqual(post_image, 'posts/test.gif')
 
     def test_post_create_show_correct_context(self):
@@ -289,15 +283,6 @@ class PostsViewsTests(TestCase):
             reverse('users:login') + '?next=' + address
         )
         self.assertEqual(Comment.objects.count(), comments_count)
-
-    def test_comment_appear(self):
-        ("""Проверка, что комментарий появляется на """
-         """странице с постом""")
-        response = self.auth_client.get(
-            reverse('posts:post_detail', kwargs={'post_id': self.post.pk})
-        )
-        context_comment = response.context['comments'][0]
-        self.assertEqual(context_comment, self.comment)
 
     def test_post_appear_at_follow_index(self):
         ("""Пост появляется на странице избранных"""
