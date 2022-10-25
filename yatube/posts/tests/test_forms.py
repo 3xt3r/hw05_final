@@ -92,7 +92,7 @@ class PostsFormsTests(TestCase):
             'group': self.group.pk,
             'image': self.file_field,
         }
-        self.auth_client.post(
+        response = self.auth_client.post(
             reverse('posts:post_create'),
             data=form_data,
             follow=True
@@ -100,6 +100,8 @@ class PostsFormsTests(TestCase):
         # Проверка, что тестовая запись в БД с невалидной картинкой не
         # создалась
         self.assertEqual(Post.objects.count(), posts_count)
+        # Проверка, что сайт не упал
+        self.assertEqual(response.reason_phrase, 'OK')
 
     def test_posts_edit_post(self):
         """Редактирует запись в Post"""
