@@ -92,14 +92,11 @@ class PostsFormsTests(TestCase):
             'group': self.group.pk,
             'image': self.file_field,
         }
-        response = self.auth_client.post(
+        self.auth_client.post(
             reverse('posts:post_create'),
             data=form_data,
             follow=True
         )
-        # Проверка доступности страницы создания поста после загрузки
-        # невалидной картинки
-        self.assertEqual(response.reason_phrase, 'OK')
         # Проверка, что тестовая запись в БД с невалидной картинкой не
         # создалась
         self.assertEqual(Post.objects.count(), posts_count)
